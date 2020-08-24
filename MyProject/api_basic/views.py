@@ -36,6 +36,26 @@ class ArticleDetail(APIView):
         except Article.DoesNotExist:
             return HttpResponse(status=status.HTTP_400_NOT_FOUND)
 
+    def get(self, request, id):
+        article = self.get_object(id)
+        serializer = ArticleSerializer(article)
+        return response(serializer.data)
+
+    def put(self, request, id):
+        article = self.get_object(id)
+        serializer = ArticleSerializer(article, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response(serializer.data)
+        return response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        article = self.get_object(id)
+        article.delete()
+        return response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 
 
