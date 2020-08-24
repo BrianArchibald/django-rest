@@ -7,8 +7,39 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import response
 from rest_framework import status
+from rest_framework.views import APIView
 
 
+#  Class Based Views  Better way to do it
+class ArticleView(APIView):
+
+    def get(self, request):
+        articles = Article.objects.all()
+        serializer = ArticleSerializer(articles, many=True)
+        return response(serializer.data)
+
+    def post(self, request):
+        serializer = ArticleSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return response(serializer.data, status=status.HTTP_201_CREATED)
+        return response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ArticleDetail(APIView):
+
+    def get_object(self, id):
+        try:
+            return Article.objects.get(id=id)
+
+        except Article.DoesNotExist:
+            return HttpResponse(status=status.HTTP_400_NOT_FOUND)
+
+
+
+
+#  API_VIEW decorator  this is function based views
 @api_view(['GET', 'POST'])
 def article_list(request):
     if request.method == 'GET':
