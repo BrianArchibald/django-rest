@@ -22,4 +22,7 @@ from .models import Article
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ['id', 'title', 'author']
+        # fields = ['id', 'title', 'author', 'email']
+
+        # can just get all the fields as below
+        fields = '__all__'
