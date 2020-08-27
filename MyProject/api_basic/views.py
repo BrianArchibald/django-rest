@@ -8,6 +8,32 @@ from rest_framework.decorators import api_view
 from rest_framework.response import response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework import generics, mixins
+
+
+class GenericAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,
+                     mixins.UpdateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
+    serializer_class = ArticleSerializer
+    queryset = Article.objects.all()
+
+    lookup_field = 'id'
+
+    def get(self, request, id=None):
+
+        if id:
+            return self.retrieve(request)  # this uses the RetrieveModelMixin
+        else:
+            return self.list(request)  # this uses the ListModelMixin
+
+    def post(self, request):
+        return self.create(request)  # this uses the CreateModelMixin
+
+    def put(self, request, id=None):
+        return self.update(request, id)  # etc
+
+    def delete(self, request, id):
+        return self.destroy(request, id)
+
 
 
 #  Class Based Views  Better way to do it
